@@ -21,6 +21,8 @@ namespace Chess
         public static int SquareSize = 91;
 
         public Random Random = new Random();
+
+        public static int PlayerTurn = 1;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -69,14 +71,20 @@ namespace Chess
             {
                 Grid[6, i] = new Pawn(blackPawnTexture, new Vector2(OffSet.X + i * SquareSize, OffSet.Y + SquareSize * 6), Color.White, Vector2.One / 5)
                 {
-                    IsWhite = false
+                    PieceColor = PieceColor.Black
                 };
 
                 Grid[1, i] = new Pawn(whitePawnTexture, new Vector2(OffSet.X + i * SquareSize, OffSet.Y + SquareSize * 1), Color.White, Vector2.One / 5)
                 {
-                    IsWhite = true
+                    PieceColor = PieceColor.White
                 };
             }
+
+
+            Grid[0, 1] = new Knight(Content.Load<Texture2D>("White_Knight"), new Vector2(SquareSize * 1, 0) + OffSet, Color.White, Vector2.One / 7f)
+            {
+                PieceColor = PieceColor.White
+            };
 
             // TODO: use this.Content to load your game content here
         }
@@ -97,9 +105,18 @@ namespace Chess
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
                 {
-                    if (Grid[i, j].Type == PieceType.None) continue;
+                    if (Grid[i, j].Type == PieceType.None
+                        || (Grid[i, j].PieceColor == PieceColor.Black && PlayerTurn == 1)
+                        || (Grid[i, j].PieceColor == PieceColor.White && PlayerTurn == -1)) continue;
 
                     Grid[i, j].Update(gameTime);
+         
+                    if(Grid[i, j].ShouldBreakOutOfLoop)
+                    {
+                        i = Grid.GetLength(0);
+                        break;
+                    }
+           
                 }
             }
 

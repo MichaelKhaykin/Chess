@@ -14,10 +14,6 @@ namespace Chess
         public override List<(int y, int x)> PossibleMoves => throw new NotImplementedException();
 
         public override PieceType Type { get; }
-
-        public override (int y, int x) CurrentSpot { get => throw new NotImplementedException(); }
-        public override bool IsWhite { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public Empty(Texture2D texture, Vector2 position, Color color, Vector2 scale) : base(texture, position, color, scale)
         {
             Type = PieceType.None;

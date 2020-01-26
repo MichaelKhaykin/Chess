@@ -36,6 +36,8 @@ namespace Chess
                 return new Rectangle((int)(Position.X - ScaledWidth / 2), (int)(Position.Y - ScaledHeight / 2), ScaledWidth, ScaledHeight);
             }
         }
+
+        public object Tag { get; set; }
         public Sprite(Texture2D texture, Vector2 position, Color color, Vector2 scale)
         {
             Texture = texture;

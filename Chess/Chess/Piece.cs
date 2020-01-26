@@ -10,16 +10,31 @@ using System.Threading.Tasks;
 
 namespace Chess
 {
-    public abstract class Piece : Sprite 
+    public abstract class Piece : Sprite
     {
         public abstract List<(int y, int x)> PossibleMoves { get; }
         public abstract PieceType Type { get; }
 
-        public abstract (int y, int x) CurrentSpot { get; }
-    
-        private bool isEmulating = false;
+        public (int y, int x) CurrentSpot
+        {
+            get
+            {
+                for (int i = 0; i < Game1.Grid.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Game1.Grid.GetLength(1); j++)
+                    {
+                        if (Game1.Grid[i, j] == this)
+                        {
+                            return (i, j);
+                        }
+                    }
+                }
 
-        public abstract bool IsWhite { get; set; }
+                return (-1, -1);
+            }
+        }
+
+        private bool isEmulating = false;
         public override Vector2 Position
         {
             get
@@ -28,36 +43,18 @@ namespace Chess
             }
         }
         public bool HasMoved { get; set; } = false;
-
+        public bool ShouldBreakOutOfLoop { get; set; } = false;
+        public PieceColor PieceColor { get; set; }
         public Piece(Texture2D texture, Vector2 position, Color color, Vector2 scale) : base(texture, position, color, scale)
         {
         }
 
-
         public override void Update(GameTime gameTime)
         {
+            ShouldBreakOutOfLoop = false;
             if (InputManager.Mouse.LeftButton == ButtonState.Pressed && InputManager.OldMouse.LeftButton == ButtonState.Released)
             {
-                if (HitBox.Contains(InputManager.Mouse.Position))
-                {
-                    //turn off all other emulated positions
-                    for (int i = 0; i < Game1.Grid.GetLength(0); i++)
-                    {
-                        for (int j = 0; j < Game1.Grid.GetLength(1); j++)
-                        {
-                            if (Game1.Grid[i, j].Type == PieceType.None || Game1.Grid[i, j] == this) continue;
-
-                            if (Game1.Grid[i, j].isEmulating)
-                            {
-                                Game1.Grid[i, j].isEmulating = false;
-                            }
-                        }
-                    }
-
-                    isEmulating = !isEmulating;
-
-                }
-                else if(isEmulating)
+                if (isEmulating)
                 {
                     var ogPossibleMoves = PossibleMoves;
 
@@ -90,14 +87,44 @@ namespace Chess
 
                     var (y, x) = (ogPossibleMoves[index].y, ogPossibleMoves[index].x);
 
-                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Empty();
+                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Empty()
+                    {
+                        ShouldBreakOutOfLoop = true
+                    };
 
                     Game1.Grid[y, x] = this;
 
+                    //Check for pawn case
+                    if (Game1.Grid[y, x].Type == PieceType.Pawn
+                        && y == Game1.Grid.GetLength(1) - 1
+                        || y == 0)
+                    {
+                        ((Pawn)Game1.Grid[y, x]).StartScanning = true;
+                        return;
+                    }
+
+                    Game1.PlayerTurn *= -1;
+                }
+                else if (HitBox.Contains(InputManager.Mouse.Position))
+                {
+                    //turn off all other emulated positions
+                    for (int i = 0; i < Game1.Grid.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < Game1.Grid.GetLength(1); j++)
+                        {
+                            if (Game1.Grid[i, j].Type == PieceType.None || Game1.Grid[i, j] == this) continue;
+
+                            if (Game1.Grid[i, j].isEmulating)
+                            {
+                                Game1.Grid[i, j].isEmulating = false;
+                            }
+                        }
+                    }
+
+                    isEmulating = !isEmulating;
+
                 }
             }
-
-
             base.Update(gameTime);
         }
 

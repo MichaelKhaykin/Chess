@@ -16,4 +16,11 @@ namespace Chess
         Queen,
         King
     }
+
+    public enum PieceColor
+    {
+        None,
+        White,
+        Black
+    }
 }
