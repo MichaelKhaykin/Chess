@@ -36,14 +36,17 @@ namespace Chess
                 return new Rectangle((int)(Position.X - ScaledWidth / 2), (int)(Position.Y - ScaledHeight / 2), ScaledWidth, ScaledHeight);
             }
         }
-
         public object Tag { get; set; }
+
+        public SpriteEffects SpriteEffect { get; set; }
         public Sprite(Texture2D texture, Vector2 position, Color color, Vector2 scale)
         {
             Texture = texture;
             Position = position;
             Color = color;
             Scale = scale;
+
+            SpriteEffect = SpriteEffects.None;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -52,7 +55,7 @@ namespace Chess
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, null, Color, 0f, Origin, Scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Texture, Position, null, Color, 0f, Origin, Scale, SpriteEffect, 0f);
         }
     }
 }

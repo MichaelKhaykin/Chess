@@ -72,8 +72,8 @@ namespace Chess
 
         public override PieceType Type { get; }
 
-        public Knight(Texture2D texture, Vector2 position, Color color, Vector2 scale)
-            : base(texture, position, color, scale)
+        public Knight(Texture2D texture, Vector2 position, Color color, Vector2 scale, PieceColor pieceColor)
+            : base(texture, position, color, scale, pieceColor)
         {
             Type = PieceType.Knight;
         }

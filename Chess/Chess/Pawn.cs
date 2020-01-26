@@ -88,8 +88,8 @@ namespace Chess
         public override PieceType Type { get; }
 
         public bool StartScanning = false;
-        public Pawn(Texture2D texture, Vector2 position, Color color, Vector2 scale)
-            : base(texture, position, color, scale)
+        public Pawn(Texture2D texture, Vector2 position, Color color, Vector2 scale, PieceColor pieceColor)
+            : base(texture, position, color, scale, pieceColor)
         {
             Type = PieceType.Pawn;
         }
@@ -102,18 +102,28 @@ namespace Chess
                 if(InputManager.Keyboard.IsKeyDown(Keys.Q))
                 {
 
+                    Game1.PlayerTurn *= -1;
+                    StartScanning = false;
                 }
                 else if(InputManager.Keyboard.IsKeyDown(Keys.R))
                 {
 
+                    Game1.PlayerTurn *= -1;
+                    StartScanning = false;
                 }
                 else if(InputManager.Keyboard.IsKeyDown(Keys.B))
                 {
 
+                    Game1.PlayerTurn *= -1;
+                    StartScanning = false;
                 }
                 else if(InputManager.Keyboard.IsKeyDown(Keys.K))
                 {
+                    var textureToUse = PieceColor == PieceColor.White ? StaticInfo.WhiteKnightTexture : StaticInfo.BlackKnightTexture;
+                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Knight(textureToUse, Vector2.Zero, Color.White, Vector2.One, PieceColor);
 
+                    Game1.PlayerTurn *= -1;
+                    StartScanning = false;
                 }
             }
 

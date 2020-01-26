@@ -45,8 +45,10 @@ namespace Chess
         public bool HasMoved { get; set; } = false;
         public bool ShouldBreakOutOfLoop { get; set; } = false;
         public PieceColor PieceColor { get; set; }
-        public Piece(Texture2D texture, Vector2 position, Color color, Vector2 scale) : base(texture, position, color, scale)
+        public Piece(Texture2D texture, Vector2 position, Color color, Vector2 scale, PieceColor pieceColor) 
+            : base(texture, position, color, scale)
         {
+            PieceColor = pieceColor;
         }
 
         public override void Update(GameTime gameTime)
@@ -96,8 +98,8 @@ namespace Chess
 
                     //Check for pawn case
                     if (Game1.Grid[y, x].Type == PieceType.Pawn
-                        && y == Game1.Grid.GetLength(1) - 1
-                        || y == 0)
+                        && (y == Game1.Grid.GetLength(1) - 1
+                        || y == 0))
                     {
                         ((Pawn)Game1.Grid[y, x]).StartScanning = true;
                         return;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -46,6 +47,8 @@ namespace Chess
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            InitTextures(Content);
+
             for (int i = 0; i < Grid.GetLength(0); i++)
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
@@ -60,33 +63,57 @@ namespace Chess
             Pixel.SetData(new[] { Color.White });
 
             var center = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
-         
+
             //645, 225
 
             board = new Sprite(Content.Load<Texture2D>("desk"), center, Color.White, Vector2.One);
 
             var blackPawnTexture = Content.Load<Texture2D>("Black_Pawn");
             var whitePawnTexture = Content.Load<Texture2D>("White_Pawn");
-            for(int i = 0; i < Grid.GetLength(1); i++)
+            for (int i = 0; i < Grid.GetLength(1); i++)
             {
-                Grid[6, i] = new Pawn(blackPawnTexture, new Vector2(OffSet.X + i * SquareSize, OffSet.Y + SquareSize * 6), Color.White, Vector2.One / 5)
-                {
-                    PieceColor = PieceColor.Black
-                };
+                Grid[6, i] = new Pawn(blackPawnTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
 
-                Grid[1, i] = new Pawn(whitePawnTexture, new Vector2(OffSet.X + i * SquareSize, OffSet.Y + SquareSize * 1), Color.White, Vector2.One / 5)
-                {
-                    PieceColor = PieceColor.White
-                };
+                Grid[1, i] = new Pawn(whitePawnTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White);
             }
 
-
-            Grid[0, 1] = new Knight(Content.Load<Texture2D>("White_Knight"), new Vector2(SquareSize * 1, 0) + OffSet, Color.White, Vector2.One / 7f)
+            #region Knights
+            //Knight (White)
+            Grid[0, 1] = new Knight(StaticInfo.WhiteKnightTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White)
             {
-                PieceColor = PieceColor.White
+                SpriteEffect = SpriteEffects.FlipHorizontally
             };
 
+            //Second knight (White)
+            Grid[0, 6] = new Knight(StaticInfo.WhiteKnightTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White);
+
+            //Black knight 
+            Grid[7, 1] = new Knight(StaticInfo.BlackKnightTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black)
+            {
+                SpriteEffect = SpriteEffects.FlipHorizontally
+            };
+            //Second black knight
+            Grid[7, 6] = new Knight(StaticInfo.BlackKnightTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
+            #endregion
+
+
+
             // TODO: use this.Content to load your game content here
+        }
+
+        private void InitTextures(ContentManager content)
+        {
+            StaticInfo.WhiteKnightTexture = content.Load<Texture2D>("White_Knight");
+            StaticInfo.BlackKnightTexture = content.Load<Texture2D>("Black_Knight");
+
+            StaticInfo.WhiteBishopTexture = content.Load<Texture2D>("White_Bishop");
+            StaticInfo.BlackBishopTexture = content.Load<Texture2D>("Black_Bishop");
+
+            StaticInfo.WhiteRookTexture = content.Load<Texture2D>("White_Rook");
+            StaticInfo.BlackRookTexture = content.Load<Texture2D>("Black_Rook");
+
+            StaticInfo.WhiteQueenTexture = content.Load<Texture2D>("White_Queen");
+            StaticInfo.BlackQueenTexture = content.Load<Texture2D>("Black_Queen");
         }
 
         protected override void Update(GameTime gameTime)
@@ -101,22 +128,41 @@ namespace Chess
 
             Window.Title = $"X:{InputManager.Mouse.X}, Y:{InputManager.Mouse.Y}";
 
+            Piece piece = new Empty();
             for (int i = 0; i < Grid.GetLength(0); i++)
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
                 {
-                    if (Grid[i, j].Type == PieceType.None
-                        || (Grid[i, j].PieceColor == PieceColor.Black && PlayerTurn == 1)
-                        || (Grid[i, j].PieceColor == PieceColor.White && PlayerTurn == -1)) continue;
-
-                    Grid[i, j].Update(gameTime);
-         
-                    if(Grid[i, j].ShouldBreakOutOfLoop)
+                    if(Grid[i, j].Type == PieceType.Pawn 
+                        && ((Pawn)Grid[i, j]).StartScanning)
                     {
-                        i = Grid.GetLength(0);
-                        break;
+                        piece = Grid[i, j];
                     }
-           
+                }
+            }
+
+            if (piece.Type != PieceType.None)
+            {
+                piece.Update(gameTime);
+            }
+            else
+            {
+                for (int i = 0; i < Grid.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Grid.GetLength(1); j++)
+                    {
+                        if (Grid[i, j].Type == PieceType.None
+                            || (Grid[i, j].PieceColor == PieceColor.Black && PlayerTurn == 1)
+                            || (Grid[i, j].PieceColor == PieceColor.White && PlayerTurn == -1)) continue;
+
+                        Grid[i, j].Update(gameTime);
+
+                        if (Grid[i, j].ShouldBreakOutOfLoop)
+                        {
+                            i = Grid.GetLength(0);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -136,9 +182,9 @@ namespace Chess
 
 
             board.Draw(spriteBatch);
-            for(int i = 0; i < Grid.GetLength(0); i++)
+            for (int i = 0; i < Grid.GetLength(0); i++)
             {
-                for(int j = 0; j < Grid.GetLength(1); j++)
+                for (int j = 0; j < Grid.GetLength(1); j++)
                 {
                     if (Grid[i, j].Type == PieceType.None) continue;
 
