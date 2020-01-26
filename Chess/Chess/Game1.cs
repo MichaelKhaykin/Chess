@@ -96,7 +96,7 @@ namespace Chess
             Grid[7, 6] = new Knight(StaticInfo.BlackKnightTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
             #endregion
 
-
+    
 
             // TODO: use this.Content to load your game content here
         }

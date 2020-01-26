@@ -34,14 +34,16 @@ namespace Chess
                     var diagonalLeft = (CurrentSpot.y - 1, CurrentSpot.x - 1);
                     if (diagonalLeft.Item2 > 0)
                     {
-                        if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None)
+                        if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None
+                            && Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].PieceColor != PieceColor)
                         {
                             possibleMoves.Add(diagonalLeft);
                         }
                     }
 
                     var diagonalRight = (CurrentSpot.y - 1, CurrentSpot.x + 1);
-                    if (diagonalRight.Item2 < Game1.Grid.GetLength(0))
+                    if (diagonalRight.Item2 < Game1.Grid.GetLength(0)
+                        && Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].PieceColor != PieceColor)
                     {
                         if (Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].Type != PieceType.None)
                         {
@@ -66,7 +68,8 @@ namespace Chess
                     var diagonalLeft = (CurrentSpot.y + 1, CurrentSpot.x - 1);
                     if (diagonalLeft.Item2 > 0)
                     {
-                        if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None)
+                        if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None
+                            && Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].PieceColor != PieceColor)
                         {
                             possibleMoves.Add(diagonalLeft);
                         }
@@ -75,7 +78,8 @@ namespace Chess
                     var diagonalRight = (CurrentSpot.y + 1, CurrentSpot.x + 1);
                     if (diagonalRight.Item2 < Game1.Grid.GetLength(0))
                     {
-                        if (Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].Type != PieceType.None)
+                        if (Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].Type != PieceType.None
+                            && Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].PieceColor != PieceColor)
                         {
                             possibleMoves.Add(diagonalRight);
                         }
