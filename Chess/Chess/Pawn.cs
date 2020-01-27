@@ -22,6 +22,8 @@ namespace Chess
                     var start = CurrentSpot.y - 1;
                     var end = CurrentSpot.y - (HasMoved ? 1 : 2);
 
+                    if (start < 0) return possibleMoves;
+
                     for (int i = start; i >= end; i--)
                     {
                         if (Game1.Grid[i, CurrentSpot.x].Type != PieceType.None)
@@ -55,6 +57,8 @@ namespace Chess
                 {
                     var start = CurrentSpot.y + 1;
                     var end = CurrentSpot.y + (HasMoved ? 1 : 2);
+
+                    if (start >= Game1.Grid.GetLength(1)) return possibleMoves;
 
                     for (int i = start; i <= end; i++)
                     {
@@ -117,6 +121,8 @@ namespace Chess
                 }
                 else if(InputManager.Keyboard.IsKeyDown(Keys.B))
                 {
+                    var textureToUse = PieceColor == PieceColor.White ? StaticInfo.WhiteBishopTexture : StaticInfo.BlackBishopTexture;
+                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Bishop(textureToUse, Vector2.Zero, Color.White, Vector2.One, PieceColor);
 
                     Game1.PlayerTurn *= -1;
                     StartScanning = false;
