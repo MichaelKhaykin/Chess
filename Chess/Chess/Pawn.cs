@@ -115,6 +115,8 @@ namespace Chess
                 }
                 else if(InputManager.Keyboard.IsKeyDown(Keys.R))
                 {
+                    var textureToUse = PieceColor == PieceColor.White ? StaticInfo.WhiteRookTexture : StaticInfo.BlackRookTexture;
+                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Rook(textureToUse, Vector2.Zero, Color.White, Vector2.One, PieceColor);
 
                     Game1.PlayerTurn *= -1;
                     StartScanning = false;

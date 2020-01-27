@@ -104,6 +104,14 @@ namespace Chess
             Grid[7, 5] = new Bishop(StaticInfo.BlackBishopTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
             #endregion
 
+            #region Rooks
+            Grid[0, 0] = new Rook(StaticInfo.WhiteRookTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White);
+            Grid[0, 7] = new Rook(StaticInfo.WhiteRookTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White);
+
+            Grid[7, 0] = new Rook(StaticInfo.BlackRookTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
+            Grid[7, 7] = new Rook(StaticInfo.BlackRookTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
+            #endregion
+
             // TODO: use this.Content to load your game content here
         }
 
