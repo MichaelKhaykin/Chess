@@ -112,6 +112,13 @@ namespace Chess
             Grid[7, 7] = new Rook(StaticInfo.BlackRookTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
             #endregion
 
+            #region Queens
+
+            Grid[0, 3] = new Queen(StaticInfo.WhiteQueenTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.White);
+            Grid[7, 3] = new Queen(StaticInfo.BlackQueenTexture, Vector2.Zero, Color.White, Vector2.One, PieceColor.Black);
+
+            #endregion
+
             // TODO: use this.Content to load your game content here
         }
 

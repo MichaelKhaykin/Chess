@@ -109,6 +109,8 @@ namespace Chess
                 //Temporary choosing of new piece to become 
                 if(InputManager.Keyboard.IsKeyDown(Keys.Q))
                 {
+                    var textureToUse = PieceColor == PieceColor.White ? StaticInfo.WhiteQueenTexture : StaticInfo.BlackQueenTexture;
+                    Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Queen(textureToUse, Vector2.Zero, Color.White, Vector2.One, PieceColor);
 
                     Game1.PlayerTurn *= -1;
                     StartScanning = false;
