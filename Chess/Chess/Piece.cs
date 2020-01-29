@@ -12,7 +12,7 @@ namespace Chess
 {
     public abstract class Piece : Sprite
     {
-        public abstract List<(int y, int x, bool isEmpassant)> PossibleMoves { get; }
+        public abstract List<(int y, int x, object data)> PossibleMoves { get; }
         public abstract PieceType Type { get; }
 
         public (int y, int x) CurrentSpot
@@ -87,7 +87,7 @@ namespace Chess
 
                     isEmulating = false;
 
-                    var (y, x, isEmpassant) = (ogPossibleMoves[index].y, ogPossibleMoves[index].x, ogPossibleMoves[index].isEmpassant);
+                    var (y, x, data) = (ogPossibleMoves[index].y, ogPossibleMoves[index].x, ogPossibleMoves[index].data);
 
                     Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Empty()
                     {
@@ -96,19 +96,60 @@ namespace Chess
 
                     Game1.Grid[y, x] = this;
 
-                    if (isEmpassant)
+                    //represents whether it is a special case and whether the player is castling
+                    //left or right
+
+                    bool empassantInfo = false;
+                    var info = new ValueTuple<bool, bool>(false, false);
+                    
+                    if(info.GetType() == data.GetType())
                     {
-                        if (Game1.Grid[y, x].PieceColor == PieceColor.White)
+                        info = (ValueTuple<bool, bool>)data;
+                    }
+                    else if(empassantInfo.GetType() == data.GetType())
+                    {
+                        empassantInfo = (bool)data;
+                    }
+
+                    if (info.Item1 && Type == PieceType.King)
+                    {
+                        //if is castling to the right
+                        if (info.Item2 == true)
                         {
-                            Game1.Grid[y - 1, x] = new Empty();
+                            var rook = Game1.Grid[y, 7];
+                            Game1.Grid[y, 7] = Game1.Grid[y, 5];
+                            Game1.Grid[y, 5] = rook;
                         }
                         else
                         {
-                            Game1.Grid[y + 1, x] = new Empty();
+                            var rook = Game1.Grid[y, 0];
+                            Game1.Grid[y, 0] = Game1.Grid[y, 3];
+                            Game1.Grid[y, 3] = rook;
+                        }
+                    }
+                    else
+                    {
+                        //empassant case
+                        if (empassantInfo && Type == PieceType.Pawn)
+                        {
+                            if (Game1.Grid[y, x].PieceColor == PieceColor.White)
+                            {
+                                Game1.Grid[y - 1, x] = new Empty();
+                            }
+                            else
+                            {
+                                Game1.Grid[y + 1, x] = new Empty();
+                            }
+
+
+                            if (((Pawn)Game1.Grid[y, x]).shouldSetFoundEnpassantToTrue)
+                            {
+                                ((Pawn)Game1.Grid[y, x]).HasFoundEnpassant = true;
+                            }
                         }
                     }
 
-                    //Check for pawn case
+                    //Check for pawn reaching the end case
                     if (Game1.Grid[y, x].Type == PieceType.Pawn
                         && (y == Game1.Grid.GetLength(1) - 1
                         || y == 0))
@@ -117,13 +158,6 @@ namespace Chess
                         return;
                     }
 
-                    if(Game1.Grid[y, x] is Pawn)
-                    {
-                        if(((Pawn)Game1.Grid[y, x]).shouldSetFoundEnpassantToTrue)
-                        {
-                            ((Pawn)Game1.Grid[y, x]).HasFoundEnpassant = true;
-                        }
-                    }
                     Game1.PlayerTurn *= -1;
                 }
                 else if (HitBox.Contains(InputManager.Mouse.Position))

@@ -10,11 +10,11 @@ namespace Chess
 {
     public class Knight : Piece
     {
-        public override List<(int y, int x, bool isEmpassant)> PossibleMoves
+        public override List<(int y, int x, object data)> PossibleMoves
         {
             get
             {
-                List<(int y, int x, bool isEmpassant)> possibleMoves = new List<(int y, int x, bool isEmpassant)>();
+                List<(int y, int x, object data)> possibleMoves = new List<(int y, int x, object data)>();
 
                 if (CurrentSpot.x + 2 < Game1.Grid.GetLength(0)
                     && CurrentSpot.y + 1 < Game1.Grid.GetLength(1)

@@ -10,11 +10,11 @@ namespace Chess
 {
     public class Bishop : Piece
     {
-        public override List<(int y, int x, bool isEmpassant)> PossibleMoves
+        public override List<(int y, int x, object data)> PossibleMoves
         {
             get
             {
-                var possibleMoves = new List<(int y, int x, bool isEmpassant)>();
+                var possibleMoves = new List<(int y, int x, object data)>();
 
                 possibleMoves.AddRange(Helper(1, 1));
                 possibleMoves.AddRange(Helper(1, -1));
@@ -31,9 +31,9 @@ namespace Chess
             Type = PieceType.Bishop;
         }
 
-        private List<(int y, int x, bool isEmpassant)> Helper(int movingX, int movingY)
+        private List<(int y, int x, object data)> Helper(int movingX, int movingY)
         {
-            var moves = new List<(int y, int x, bool isEmpassant)>();
+            var moves = new List<(int y, int x, object data)>();
 
             bool hasBlackBeenFound = false;
 

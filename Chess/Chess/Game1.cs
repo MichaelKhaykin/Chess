@@ -119,6 +119,11 @@ namespace Chess
 
             #endregion
 
+            #region Kings
+            Grid[0, 4] = new King(Content.Load<Texture2D>("White_King"), Vector2.Zero, Color.White, Vector2.One / 9f, PieceColor.White);
+            Grid[7, 4] = new King(Content.Load<Texture2D>("Black_King"), Vector2.Zero, Color.White, Vector2.One / 9f, PieceColor.Black);
+            #endregion
+
             // TODO: use this.Content to load your game content here
         }
 
