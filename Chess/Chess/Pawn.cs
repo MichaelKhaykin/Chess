@@ -11,14 +11,46 @@ namespace Chess
 {
     public class Pawn : Piece
     {
-        public override List<(int y, int x)> PossibleMoves
+        public bool shouldSetFoundEnpassantToTrue = false;
+
+        public bool HasFoundEnpassant = false;
+        public override List<(int y, int x, bool isEmpassant)> PossibleMoves
         {
             get
             {
-                List<(int y, int x)> possibleMoves = new List<(int y, int x)>();
+                List<(int y, int x, bool isEmpassant)> possibleMoves = new List<(int y, int x, bool isEmpassant)>();
 
                 if (PieceColor == PieceColor.Black)
                 {
+                    //en passant 
+                    if(CurrentSpot.y == 3)
+                    {
+                        if (CurrentSpot.x - 1 >= 0)
+                        {
+                            if (Game1.Grid[CurrentSpot.y, CurrentSpot.x - 1].PieceColor == PieceColor.White
+                                && Game1.Grid[CurrentSpot.y, CurrentSpot.x - 1].Type == PieceType.Pawn
+                                && !HasFoundEnpassant
+                                && Game1.Grid[CurrentSpot.y - 1, CurrentSpot.x - 1] is Empty)
+                            {
+                                possibleMoves.Add((CurrentSpot.y - 1, CurrentSpot.x - 1, true));
+                                shouldSetFoundEnpassantToTrue = true;
+                            }
+                        }
+
+                        if (CurrentSpot.x + 1 < Game1.Grid.GetLength(0))
+                        {
+                            if (Game1.Grid[CurrentSpot.y, CurrentSpot.x + 1].PieceColor == PieceColor.White
+                                && Game1.Grid[CurrentSpot.y, CurrentSpot.x + 1].Type == PieceType.Pawn
+                                && !HasFoundEnpassant
+                                && Game1.Grid[CurrentSpot.y - 1, CurrentSpot.x + 1] is Empty)
+                            {
+                                possibleMoves.Add((CurrentSpot.y - 1, CurrentSpot.x + 1, true));
+                                shouldSetFoundEnpassantToTrue = true;
+                            }
+                        }
+                    }
+
+
                     var start = CurrentSpot.y - 1;
                     var end = CurrentSpot.y - (HasMoved ? 1 : 2);
 
@@ -30,7 +62,7 @@ namespace Chess
                         {
                             break;
                         }
-                        possibleMoves.Add((i, CurrentSpot.x));
+                        possibleMoves.Add((i, CurrentSpot.x, false));
                     }
 
                     var diagonalLeft = (CurrentSpot.y - 1, CurrentSpot.x - 1);
@@ -39,7 +71,7 @@ namespace Chess
                         if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None
                             && Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].PieceColor != PieceColor)
                         {
-                            possibleMoves.Add(diagonalLeft);
+                            possibleMoves.Add((diagonalLeft.Item1, diagonalLeft.Item2, false));
                         }
                     }
 
@@ -49,12 +81,40 @@ namespace Chess
                     {
                         if (Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].Type != PieceType.None)
                         {
-                            possibleMoves.Add(diagonalRight);
+                            possibleMoves.Add((diagonalRight.Item1, diagonalRight.Item2, false));
                         }
                     }
                 }
                 else
                 {
+                    //handle enpassant
+                    if (CurrentSpot.y == 4)
+                    {
+                        if (CurrentSpot.x - 1 >= 0)
+                        {
+                            if (Game1.Grid[CurrentSpot.y, CurrentSpot.x - 1].PieceColor == PieceColor.Black
+                                && Game1.Grid[CurrentSpot.y, CurrentSpot.x - 1].Type == PieceType.Pawn
+                                && !HasFoundEnpassant
+                                && Game1.Grid[CurrentSpot.y + 1, CurrentSpot.x - 1] is Empty)
+                            {
+                                possibleMoves.Add((CurrentSpot.y + 1, CurrentSpot.x - 1, true));
+                                shouldSetFoundEnpassantToTrue = true;
+                            }
+                        }
+
+                        if (CurrentSpot.x + 1 < Game1.Grid.GetLength(0))
+                        {
+                            if (Game1.Grid[CurrentSpot.y, CurrentSpot.x + 1].PieceColor == PieceColor.Black
+                                && Game1.Grid[CurrentSpot.y, CurrentSpot.x + 1].Type == PieceType.Pawn
+                                && !HasFoundEnpassant
+                                && Game1.Grid[CurrentSpot.y + 1, CurrentSpot.x + 1] is Empty)
+                            {
+                                possibleMoves.Add((CurrentSpot.y + 1, CurrentSpot.x + 1, true));
+                                shouldSetFoundEnpassantToTrue = true;
+                            }
+                        }
+                    }
+
                     var start = CurrentSpot.y + 1;
                     var end = CurrentSpot.y + (HasMoved ? 1 : 2);
 
@@ -66,7 +126,7 @@ namespace Chess
                         {
                             break;
                         }
-                        possibleMoves.Add((i, CurrentSpot.x));
+                        possibleMoves.Add((i, CurrentSpot.x, false));
                     }
 
                     var diagonalLeft = (CurrentSpot.y + 1, CurrentSpot.x - 1);
@@ -75,7 +135,7 @@ namespace Chess
                         if (Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].Type != PieceType.None
                             && Game1.Grid[diagonalLeft.Item1, diagonalLeft.Item2].PieceColor != PieceColor)
                         {
-                            possibleMoves.Add(diagonalLeft);
+                            possibleMoves.Add((diagonalLeft.Item1, diagonalLeft.Item2, false));
                         }
                     }
 
@@ -85,7 +145,7 @@ namespace Chess
                         if (Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].Type != PieceType.None
                             && Game1.Grid[diagonalRight.Item1, diagonalRight.Item2].PieceColor != PieceColor)
                         {
-                            possibleMoves.Add(diagonalRight);
+                            possibleMoves.Add((diagonalRight.Item1, diagonalRight.Item2, false));
                         }
                     }
                 }

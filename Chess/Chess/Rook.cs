@@ -10,11 +10,11 @@ namespace Chess
 {
     public class Rook : Piece
     {
-        public override List<(int y, int x)> PossibleMoves
+        public override List<(int y, int x, bool isEmpassant)> PossibleMoves
         {
             get
             {
-                var possibleMoves = new List<(int y, int x)>();
+                var possibleMoves = new List<(int y, int x, bool isEmpassant)>();
 
                 possibleMoves.AddRange(Helper(1, 0));
                 possibleMoves.AddRange(Helper(-1, 0));
@@ -33,9 +33,9 @@ namespace Chess
         }
 
 
-        private List<(int y, int x)> Helper(int movingX, int movingY)
+        private List<(int y, int x, bool isEmpassant)> Helper(int movingX, int movingY)
         {
-            var moves = new List<(int y, int x)>();
+            var moves = new List<(int y, int x, bool isEmpassant)>();
 
             bool hasBlackBeenFound = false;
 
@@ -50,7 +50,7 @@ namespace Chess
             {
                 hasBlackBeenFound = Game1.Grid[CurrentSpot.y + movingY, CurrentSpot.x + movingX].PieceColor == (this.PieceColor == PieceColor.Black ? PieceColor.White : PieceColor.Black);
 
-                moves.Add((CurrentSpot.y + movingY, CurrentSpot.x + movingX));
+                moves.Add((CurrentSpot.y + movingY, CurrentSpot.x + movingX, false));
 
                 movingX += 1 * (movingX == 0 ? 0 : movingX > 0 ? 1 : -1);
                 movingY += 1 * (movingY == 0 ? 0 : movingY > 0 ? 1 : -1);

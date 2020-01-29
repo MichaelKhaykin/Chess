@@ -12,7 +12,7 @@ namespace Chess
 {
     public abstract class Piece : Sprite
     {
-        public abstract List<(int y, int x)> PossibleMoves { get; }
+        public abstract List<(int y, int x, bool isEmpassant)> PossibleMoves { get; }
         public abstract PieceType Type { get; }
 
         public (int y, int x) CurrentSpot
@@ -87,7 +87,7 @@ namespace Chess
 
                     isEmulating = false;
 
-                    var (y, x) = (ogPossibleMoves[index].y, ogPossibleMoves[index].x);
+                    var (y, x, isEmpassant) = (ogPossibleMoves[index].y, ogPossibleMoves[index].x, ogPossibleMoves[index].isEmpassant);
 
                     Game1.Grid[CurrentSpot.y, CurrentSpot.x] = new Empty()
                     {
@@ -95,6 +95,18 @@ namespace Chess
                     };
 
                     Game1.Grid[y, x] = this;
+
+                    if (isEmpassant)
+                    {
+                        if (Game1.Grid[y, x].PieceColor == PieceColor.White)
+                        {
+                            Game1.Grid[y - 1, x] = new Empty();
+                        }
+                        else
+                        {
+                            Game1.Grid[y + 1, x] = new Empty();
+                        }
+                    }
 
                     //Check for pawn case
                     if (Game1.Grid[y, x].Type == PieceType.Pawn
@@ -105,6 +117,13 @@ namespace Chess
                         return;
                     }
 
+                    if(Game1.Grid[y, x] is Pawn)
+                    {
+                        if(((Pawn)Game1.Grid[y, x]).shouldSetFoundEnpassantToTrue)
+                        {
+                            ((Pawn)Game1.Grid[y, x]).HasFoundEnpassant = true;
+                        }
+                    }
                     Game1.PlayerTurn *= -1;
                 }
                 else if (HitBox.Contains(InputManager.Mouse.Position))
