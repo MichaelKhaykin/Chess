@@ -313,9 +313,18 @@ namespace Chess
                     }
 
                     myKing.IsInCheck = false;
-                    PossibleUnCheckMove = (-1, -1);
+                    for(int i = 0; i < Game1.Grid.GetLength(0); i++)
+                    {
+                        for(int j = 0; j < Game1.Grid.GetLength(1); j++)
+                        {
+                            if (Game1.Grid[i, j].PieceColor != PieceColor) continue;
+                            Game1.Grid[i, j].PossibleUnCheckMove = (-1, -1);
+                        }
+                    }
 
                     Game1.PlayerTurn *= -1;
+                    Game1.piecesToUpdate.Clear();
+                    Game1.isInCheck = false;
                 }
                 else if (HitBox.Contains(InputManager.Mouse.Position))
                 {

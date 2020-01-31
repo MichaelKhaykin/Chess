@@ -27,6 +27,9 @@ namespace Chess
         public static int PlayerTurn = 1;
 
         public static Stack<(Piece[,], int PlayerTurn)> Moves = new Stack<(Piece[,], int playerTurn)>();
+
+        public static bool isInCheck = false;
+        public static List<Piece> piecesToUpdate = new List<Piece>();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -158,8 +161,6 @@ namespace Chess
 
             Window.Title = $"X:{InputManager.Mouse.X}, Y:{InputManager.Mouse.Y}";
 
-            List<Piece> piecesToUpdate = new List<Piece>();
-            bool isInCheck = false;
             for (int i = 0; i < Grid.GetLength(0); i++)
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
@@ -170,11 +171,14 @@ namespace Chess
                         piecesToUpdate.Add(Grid[i, j]);
                     }
                     else if (Grid[i, j].Type == PieceType.King
-                        && ((King)Grid[i, j]).IsInCheck)
+                        && ((King)Grid[i, j]).IsInCheck && isInCheck == false)
                     {
-                        piecesToUpdate.Add(Grid[i, j]);
-
                         isInCheck = true;
+
+                        if (Grid[i, j].PossibleMoves.Count > 0)
+                        {
+                            piecesToUpdate.Add(Grid[i, j]);
+                        }
 
                         for (int x = 0; x < Grid.GetLength(0); x++)
                         {
@@ -199,9 +203,9 @@ namespace Chess
 
             if (piecesToUpdate.Count > 0)
             {
-                foreach (var piece in piecesToUpdate)
+                for(int i = 0; i < piecesToUpdate.Count; i++)
                 {
-                    piece.Update(gameTime);
+                    piecesToUpdate[i].Update(gameTime);
                 }
             }
             else
