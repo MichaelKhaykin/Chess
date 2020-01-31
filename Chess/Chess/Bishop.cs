@@ -14,6 +14,8 @@ namespace Chess
         {
             get
             {
+                if (PossibleUnCheckMove != (-1, -1)) return new List<(int y, int x, object data)>() { (PossibleUnCheckMove.y, PossibleUnCheckMove.x, false) };
+
                 var possibleMoves = new List<(int y, int x, object data)>();
 
                 possibleMoves.AddRange(Helper(1, 1));

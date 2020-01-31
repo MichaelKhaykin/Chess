@@ -14,6 +14,8 @@ namespace Chess
         {
             get
             {
+                if (PossibleUnCheckMove != (-1, -1)) return new List<(int y, int x, object data)>() { (PossibleUnCheckMove.y, PossibleUnCheckMove.x, false) };
+
                 List<(int y, int x, object data)> possibleMoves = new List<(int y, int x, object data)>();
 
                 if (CurrentSpot.x + 2 < Game1.Grid.GetLength(0) && CurrentSpot.y + 1 < Game1.Grid.GetLength(1))

@@ -48,12 +48,13 @@ namespace Chess
 
         public List<(int y, int x)> PiecesProtectedByMe = new List<(int y, int x)>();
 
+        public (int y, int x) PossibleUnCheckMove = (-1, -1);
         public bool CanPreventCheck
         {
             get
             {
                 if (this is King) return false;
-             
+
                 foreach (var move in PossibleMoves)
                 {
                     var og = Game1.Grid[move.y, move.x];
@@ -85,6 +86,8 @@ namespace Chess
                     List<(int y, int x)> allPossibleSpots = new List<(int y, int x)>();
                     for (int i = 0; i < pieces.Count; i++)
                     {
+                        if (pieces[i] is King) continue;
+
                         foreach (var possibleMove in pieces[i].PossibleMoves)
                         {
                             allPossibleSpots.Add((possibleMove.y, possibleMove.x));
@@ -104,7 +107,12 @@ namespace Chess
                     Game1.Grid[move.y, move.x] = og;
                     Game1.Grid[ogCurrentSpot.y, ogCurrentSpot.x] = this;
 
-                    if (thisDoesGetMeOutOfCheck) return true;
+
+                    if (thisDoesGetMeOutOfCheck)
+                    {
+                        PossibleUnCheckMove = (move.y, move.x);
+                        return true;
+                    }
                 }
 
                 return false;
@@ -123,7 +131,6 @@ namespace Chess
             {
                 if (isEmulating)
                 {
-
                     var ogPossibleMoves = PossibleMoves;
 
                     Rectangle[] rectangles = new Rectangle[ogPossibleMoves.Count];
@@ -306,6 +313,7 @@ namespace Chess
                     }
 
                     myKing.IsInCheck = false;
+                    PossibleUnCheckMove = (-1, -1);
 
                     Game1.PlayerTurn *= -1;
                 }

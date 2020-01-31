@@ -192,14 +192,14 @@ namespace Chess
                 }
             }
 
-            if(piecesToUpdate.Count == 0 && isInCheck)
+            if (piecesToUpdate.Count == 0 && isInCheck)
             {
                 //checkmate;
             }
 
             if (piecesToUpdate.Count > 0)
             {
-                foreach(var piece in piecesToUpdate)
+                foreach (var piece in piecesToUpdate)
                 {
                     piece.Update(gameTime);
                 }
@@ -225,7 +225,7 @@ namespace Chess
                 }
             }
 
-            if(InputManager.Keyboard.IsKeyDown(Keys.Delete)
+            if (InputManager.Keyboard.IsKeyDown(Keys.Delete)
                 && InputManager.OldKeyboardState.IsKeyUp(Keys.Delete) && Moves.Count > 0)
             {
                 //revert last move

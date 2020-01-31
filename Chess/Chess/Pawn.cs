@@ -18,6 +18,8 @@ namespace Chess
         {
             get
             {
+                if (PossibleUnCheckMove != (-1, -1)) return new List<(int y, int x, object data)>() { (PossibleUnCheckMove.y, PossibleUnCheckMove.x, false) };
+
                 List<(int y, int x, object data)> possibleMoves = new List<(int y, int x, object data)>();
 
                 if (PieceColor == PieceColor.Black)
