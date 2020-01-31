@@ -61,6 +61,10 @@ namespace Chess
                 isInTopBounds = CurrentSpot.y + movingY >= 0;
             }
 
+            if(!hasBlackBeenFound && isInBottomBounds && isInRightBounds && isInLeftBounds && isInTopBounds)
+            {
+                PiecesProtectedByMe.Add((CurrentSpot.y + movingY, CurrentSpot.x + movingX));
+            }
             return moves;
         }
     }

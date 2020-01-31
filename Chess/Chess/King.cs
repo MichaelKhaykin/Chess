@@ -14,7 +14,6 @@ namespace Chess
         { 
             get
             {
-
                 List<(int y, int x, object data)> possibleMoves = new List<(int y, int x, object data)>();
                 List<(int y, int x, object data)> invalidMoves = new List<(int y, int x, object data)>();
 
@@ -32,6 +31,8 @@ namespace Chess
 
                 int factor = (PieceColor == PieceColor.White ? 1 : -1);
 
+                List<(int y, int x)> protectedPieces = new List<(int y, int x)>();
+
                 for(int i = 0; i < pieces.Count; i++)
                 {
                     var piece = pieces[i];
@@ -39,6 +40,7 @@ namespace Chess
                     if (piece.Type == PieceType.King) continue;
 
                     invalidMoves.AddRange(piece.PossibleMoves);
+                    protectedPieces.AddRange(piece.PiecesProtectedByMe);
 
                     if (piece.Type == PieceType.Pawn)
                     {
@@ -53,14 +55,14 @@ namespace Chess
                     }
                 }
 
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x - 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x - 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x + 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x + 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y, CurrentSpot.x + 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y, CurrentSpot.x - 1);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x);
-                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x - 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x - 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x + 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x + 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y, CurrentSpot.x + 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y, CurrentSpot.x - 1, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y + 1, CurrentSpot.x, protectedPieces);
+                AddToList(possibleMoves, invalidMoves, CurrentSpot.y - 1, CurrentSpot.x, protectedPieces);
 
                 //handle castling
                 if(HasMoved == false)
@@ -92,9 +94,9 @@ namespace Chess
                 return possibleMoves;
             }
         }
-
         public override PieceType Type { get; }
 
+        public bool IsInCheck { get; set; }
         public King(Texture2D texture, Vector2 position, Color color, Vector2 scale, PieceColor pieceColor) : base(texture, position, color, scale, pieceColor)
         {
             Type = PieceType.King;
@@ -104,6 +106,7 @@ namespace Chess
         {
             if(Game1.Grid[x, y].PieceColor == PieceColor)
             {
+                PiecesProtectedByMe.Add((y, x));
                 return true;
             }
 
@@ -113,14 +116,16 @@ namespace Chess
         }
 
         private void AddToList(List<(int y, int x, object data)> possibleMoves,
-            List<(int y, int x, object data)> invalidMoves, int y, int x)
+            List<(int y, int x, object data)> invalidMoves, int y, int x, List<(int y, int x)> protectedPieces)
         {
             if (x < 0 || x >= Game1.Grid.GetLength(0)
                 || y < 0 || y >= Game1.Grid.GetLength(1)) return;
 
             if (!invalidMoves.Contains((y, x, false))
-                    && CheckIfPieceIsHere(y, x) == false)
+                    && CheckIfPieceIsHere(y, x) == false
+                    && !protectedPieces.Contains((y, x)))
             {
+
                 possibleMoves.Add((y, x, false));
             }
         }

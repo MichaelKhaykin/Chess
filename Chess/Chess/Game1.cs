@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Chess
 {
@@ -24,6 +25,8 @@ namespace Chess
         public Random Random = new Random();
 
         public static int PlayerTurn = 1;
+
+        public static Stack<(Piece[,], int PlayerTurn)> Moves = new Stack<(Piece[,], int playerTurn)>();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -124,6 +127,7 @@ namespace Chess
             Grid[7, 4] = new King(Content.Load<Texture2D>("Black_King"), Vector2.Zero, Color.White, Vector2.One / 9f, PieceColor.Black);
             #endregion
 
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -154,22 +158,51 @@ namespace Chess
 
             Window.Title = $"X:{InputManager.Mouse.X}, Y:{InputManager.Mouse.Y}";
 
-            Piece piece = new Empty();
+            List<Piece> piecesToUpdate = new List<Piece>();
+            bool isInCheck = false;
             for (int i = 0; i < Grid.GetLength(0); i++)
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
                 {
-                    if(Grid[i, j].Type == PieceType.Pawn 
+                    if (Grid[i, j].Type == PieceType.Pawn
                         && ((Pawn)Grid[i, j]).StartScanning)
                     {
-                        piece = Grid[i, j];
+                        piecesToUpdate.Add(Grid[i, j]);
+                    }
+                    else if (Grid[i, j].Type == PieceType.King
+                        && ((King)Grid[i, j]).IsInCheck)
+                    {
+                        piecesToUpdate.Add(Grid[i, j]);
+
+                        isInCheck = true;
+
+                        for (int x = 0; x < Grid.GetLength(0); x++)
+                        {
+                            for (int y = 0; y < Grid.GetLength(1); y++)
+                            {
+                                if (Grid[x, y].PieceColor != Grid[i, j].PieceColor) continue;
+
+                                if (Grid[x, y].CanPreventCheck)
+                                {
+                                    piecesToUpdate.Add(Grid[x, y]);
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            if (piece.Type != PieceType.None)
+            if(piecesToUpdate.Count == 0 && isInCheck)
             {
-                piece.Update(gameTime);
+                //checkmate;
+            }
+
+            if (piecesToUpdate.Count > 0)
+            {
+                foreach(var piece in piecesToUpdate)
+                {
+                    piece.Update(gameTime);
+                }
             }
             else
             {
@@ -190,6 +223,15 @@ namespace Chess
                         }
                     }
                 }
+            }
+
+            if(InputManager.Keyboard.IsKeyDown(Keys.Delete)
+                && InputManager.OldKeyboardState.IsKeyUp(Keys.Delete) && Moves.Count > 0)
+            {
+                //revert last move
+                var info = Moves.Pop();
+                Grid = info.Item1;
+                PlayerTurn = info.PlayerTurn;
             }
 
             InputManager.OldMouse = InputManager.Mouse;

@@ -47,7 +47,7 @@ namespace Chess
             bool isInTopBounds = CurrentSpot.y + movingY >= 0;
 
             while (isInBottomBounds && isInRightBounds && isInLeftBounds && isInTopBounds &&
-                Game1.Grid[CurrentSpot.y + movingY, CurrentSpot.x + movingX].PieceColor != this.PieceColor
+                Game1.Grid[CurrentSpot.y + movingY, CurrentSpot.x + movingX].PieceColor != PieceColor
                 && hasBlackBeenFound == false)
             {
                 hasBlackBeenFound = Game1.Grid[CurrentSpot.y + movingY, CurrentSpot.x + movingX].PieceColor == (this.PieceColor == PieceColor.Black ? PieceColor.White : PieceColor.Black);
@@ -63,6 +63,10 @@ namespace Chess
                 isInTopBounds = CurrentSpot.y + movingY >= 0;
             }
 
+            if(!hasBlackBeenFound && isInBottomBounds && isInRightBounds && isInLeftBounds && isInTopBounds)
+            {
+                PiecesProtectedByMe.Add((CurrentSpot.y + movingY, CurrentSpot.x + movingX));
+            }
             return moves;
         }
 
